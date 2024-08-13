@@ -88,7 +88,7 @@
 
 ## Extras
 
-- [ ] Implement [DDD Pattern](<[https://khalilstemmler.com/articles/categories/domain-driven-design/](https://khalilstemmler.com/articles/categories/domain-driven-design/)>)
+- [x] Implement [DDD Pattern](<[https://khalilstemmler.com/articles/categories/domain-driven-design/](https://khalilstemmler.com/articles/categories/domain-driven-design/)>)
 - [ ] Implement Unit Testing
 
 ## Notes

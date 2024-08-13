@@ -31,6 +31,7 @@ let MembersController = class MembersController {
 exports.MembersController = MembersController;
 __decorate([
     (0, common_1.Post)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Add a member' }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [postMember_dto_1.postMemberDto]),
@@ -38,6 +39,7 @@ __decorate([
 ], MembersController.prototype, "postMember", null);
 __decorate([
     (0, common_1.Get)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Get all member' }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)

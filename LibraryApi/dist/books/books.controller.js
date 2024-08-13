@@ -38,6 +38,7 @@ let BooksController = class BooksController {
 exports.BooksController = BooksController;
 __decorate([
     (0, common_1.Post)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Add a book' }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [postBook_dto_1.postBookDto]),
@@ -45,12 +46,14 @@ __decorate([
 ], BooksController.prototype, "postBooks", null);
 __decorate([
     (0, common_1.Get)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Get all books thats not borrowed' }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], BooksController.prototype, "getBooks", null);
 __decorate([
     (0, common_1.Post)('/borrow'),
+    (0, swagger_1.ApiOperation)({ summary: 'Borrow Book' }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [transactionBook_dto_1.transactionBookDto]),
@@ -58,6 +61,7 @@ __decorate([
 ], BooksController.prototype, "borrowBook", null);
 __decorate([
     (0, common_1.Post)('/return'),
+    (0, swagger_1.ApiOperation)({ summary: 'Return Book' }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [transactionBook_dto_1.transactionBookDto]),
