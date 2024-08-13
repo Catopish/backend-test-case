@@ -6,6 +6,12 @@ export declare class BooksController {
     constructor(BooksService: BooksService);
     postBooks(postBookDTO: postBookDto): Promise<import("./book.entity").Book>;
     getBooks(): Promise<import("./book.entity").Book[]>;
-    borrowBook(borrowBookDTO: transactionBookDto): Promise<void>;
-    returnBook(returnBookDTO: transactionBookDto): Promise<void>;
+    borrowBook(borrowBookDTO: transactionBookDto): Promise<{
+        success: boolean;
+        message: string;
+    }>;
+    returnBook(returnBookDTO: transactionBookDto): Promise<{
+        success: boolean;
+        message: string;
+    }>;
 }

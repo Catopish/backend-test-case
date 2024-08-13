@@ -30,16 +30,20 @@ let BooksService = class BooksService {
             where: { code: memberCode },
             relations: ['book'],
         });
-        console.log(member.borrowedBooksNum);
         if (!member)
             throw new common_1.NotFoundException('Bad Request');
-        if (member.isPenalized)
-            throw new common_1.ConflictException('Member is penalized');
+        if (member.isPenalized) {
+            if (member.penaltyUntil >= new Date()) {
+                throw new common_1.ConflictException('Member is penalized');
+            }
+            member.isPenalized = false;
+        }
         if (member.borrowedBooksNum >= 2) {
             throw new common_1.HttpException("Member can't borrow more books", common_1.HttpStatus.FORBIDDEN);
         }
         const book = await this.booksRepository.findOne({
             where: { code: bookCode },
+            relations: ['member'],
         });
         if (!book) {
             throw new common_1.NotFoundException(`Book with code ${bookCode} not found`);
@@ -58,6 +62,7 @@ let BooksService = class BooksService {
         book.stock -= 1;
         await this.booksRepository.save(book);
         await this.membersRepository.save(member);
+        return { success: true, message: 'Book borrowed successfully' };
     }
     async returnBook(returnBookDTO) {
         const { memberCode, bookCode } = returnBookDTO;
@@ -65,12 +70,12 @@ let BooksService = class BooksService {
             where: { code: memberCode },
             relations: ['book'],
         });
+        if (!member)
+            throw new common_1.NotFoundException(`Member with code ${memberCode} Not Found`);
         const book = await this.booksRepository.findOne({
             where: { code: bookCode },
             relations: ['member'],
         });
-        if (!member)
-            throw new common_1.NotFoundException(`Member with code ${memberCode} Not Found`);
         if (!book) {
             throw new common_1.NotFoundException(`Book not with code ${memberCode} found`);
         }
@@ -90,6 +95,7 @@ let BooksService = class BooksService {
         book.stock += 1;
         await this.booksRepository.save(book);
         await this.membersRepository.save(member);
+        return { success: true, message: 'Book returned successfully' };
     }
 };
 exports.BooksService = BooksService;

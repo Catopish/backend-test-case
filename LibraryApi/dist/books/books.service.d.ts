@@ -9,6 +9,12 @@ export declare class BooksService {
     constructor(booksRepository: BooksRepository, membersRepository: MembersRepository);
     postBook(postBookDTO: postBookDto): Promise<Book>;
     getBooks(): Promise<Book[]>;
-    borrowBook(borrowBookDTO: transactionBookDto): Promise<void>;
-    returnBook(returnBookDTO: transactionBookDto): Promise<void>;
+    borrowBook(borrowBookDTO: transactionBookDto): Promise<{
+        success: boolean;
+        message: string;
+    }>;
+    returnBook(returnBookDTO: transactionBookDto): Promise<{
+        success: boolean;
+        message: string;
+    }>;
 }
