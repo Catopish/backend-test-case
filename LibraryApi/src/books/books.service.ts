@@ -27,6 +27,7 @@ export class BooksService {
   }
 
   async borrowBook(borrowBookDTO: transactionBookDto) {
+    let isPenalizedMessage = '';
     const { memberCode, bookCode } = borrowBookDTO;
     const member = await this.membersRepository.findOne({
       where: { code: memberCode },
@@ -39,9 +40,13 @@ export class BooksService {
     //NOTE: checking if penalized, if the penalty expired, then set the isPenalized to false
     if (member.isPenalized) {
       if (member.penaltyUntil >= new Date()) {
-        throw new ConflictException('Member is penalized');
+        throw new ConflictException(
+          `Member is penalized until ${member.penaltyUntil}`,
+        );
       }
       member.isPenalized = false;
+      isPenalizedMessage = 'Member is no longer penalized';
+      member.penaltyUntil = null;
     }
 
     //NOTE: checking if member can borrow
@@ -82,7 +87,10 @@ export class BooksService {
     await this.booksRepository.save(book);
     await this.membersRepository.save(member);
 
-    return { success: true, message: 'Book borrowed successfully' };
+    return {
+      success: true,
+      message: `Book borrowed successfully ${isPenalizedMessage}`,
+    };
   }
 
   async returnBook(returnBookDTO: transactionBookDto) {
@@ -128,6 +136,12 @@ export class BooksService {
 
     await this.booksRepository.save(book);
     await this.membersRepository.save(member);
+
+    if (member.isPenalized)
+      return {
+        success: true,
+        message: `Book returned successfully but member is penalized until ${member.penaltyUntil}`,
+      };
 
     return { success: true, message: 'Book returned successfully' };
   }

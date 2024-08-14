@@ -25,6 +25,7 @@ let BooksService = class BooksService {
         return this.booksRepository.getBooks();
     }
     async borrowBook(borrowBookDTO) {
+        let isPenalizedMessage = '';
         const { memberCode, bookCode } = borrowBookDTO;
         const member = await this.membersRepository.findOne({
             where: { code: memberCode },
@@ -34,9 +35,11 @@ let BooksService = class BooksService {
             throw new common_1.NotFoundException('Bad Request');
         if (member.isPenalized) {
             if (member.penaltyUntil >= new Date()) {
-                throw new common_1.ConflictException('Member is penalized');
+                throw new common_1.ConflictException(`Member is penalized until ${member.penaltyUntil}`);
             }
             member.isPenalized = false;
+            isPenalizedMessage = 'Member is no longer penalized';
+            member.penaltyUntil = null;
         }
         if (member.borrowedBooksNum >= 2) {
             throw new common_1.HttpException("Member can't borrow more books", common_1.HttpStatus.FORBIDDEN);
@@ -62,7 +65,10 @@ let BooksService = class BooksService {
         book.stock -= 1;
         await this.booksRepository.save(book);
         await this.membersRepository.save(member);
-        return { success: true, message: 'Book borrowed successfully' };
+        return {
+            success: true,
+            message: `Book borrowed successfully ${isPenalizedMessage}`,
+        };
     }
     async returnBook(returnBookDTO) {
         const { memberCode, bookCode } = returnBookDTO;
@@ -95,6 +101,11 @@ let BooksService = class BooksService {
         book.stock += 1;
         await this.booksRepository.save(book);
         await this.membersRepository.save(member);
+        if (member.isPenalized)
+            return {
+                success: true,
+                message: `Book returned successfully but member is penalized until ${member.penaltyUntil}`,
+            };
         return { success: true, message: 'Book returned successfully' };
     }
 };
